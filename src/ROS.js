@@ -146,13 +146,13 @@ function useROS() {
   const handleConnect = () => {
     try {
       ros.ROS.connect(ros.url);
-      
+
       ros.ROS.on("connection", () => {
         // console.log(connect)
         setROS((ros) => ({ ...ros, isConnected: true })); // seems to take awhile for the roslibjs library to report connected
         setROS((ros) => ({ ...ros, ROSConfirmedConnected: false }));
-        getTopics();
-        getServices();
+        // getTopics();
+        // getServices();
       });
 
       ros.ROS.on("error", (error) => {

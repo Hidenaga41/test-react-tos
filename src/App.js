@@ -5,19 +5,41 @@ import "./App.css";
 function App() {
   const {
     isConnected,
-    topics,
     url,
+    topics,
     changeUrl,
     toggleConnection,
     toggleAutoconnect,
+    createListener,
   } = useROS();
 
-  console.log(topics);
+  const defaultURL = "ws://localhost:9090";
+  console.log("topics", topics);
 
-  const defaultURL = "ws://0.0.0.0:9090";
+  // const dataGetTopics = getTopics();
+  // console.log("dataGetTopics", dataGetTopics);
+  const velocityListener = createListener(
+    "/vehicle/status/velocity",
+    "autoware_debug_msgs/msg/Float32Stamped",
+    0
+  );
+  console.log("velocity", velocityListener, velocityListener.subscribe());
+
+  const Subscribe = () => {
+    const velocityListener = createListener(
+      "/vehicle/status/velocity",
+      "autoware_debug_msgs/msg/Float32Stamped",
+      0
+    );
+    velocityListener.subscribe((messgae)=>{
+      console.log("velocity", messgae)
+    });
+
+    return;
+  };
+  console.log("SUb", Subscribe());
 
   useEffect(() => {
-    console.log("Toggle Connect is first ");
     if (url !== defaultURL) {
       changeUrl(defaultURL);
     }
@@ -25,27 +47,25 @@ function App() {
     if (!isConnected) {
       toggleAutoconnect();
     }
-  }, []);
+  }, [changeUrl, toggleAutoconnect, isConnected, url]);
 
   return (
-    <div className="App">
-      <p>
-        <b>Simple connect: </b>
-        <button onClick={toggleConnection}>Toggle Connect</button> <br />
-        <b>ROS url input: </b>
-        <input
-          name="urlInput"
-          defaultValue={url}
-          onChange={(event) => changeUrl(event.target.value)}
-        />
-        <br />
-        <b>ROS url to connect to: </b> {url} <br />
-        <b>Status of ROS:</b> {isConnected ? "connected" : "not connected"}
-        <br />
-        <b>Topics detected:</b>
-        <br />
-      </p>
-    </div>
+    <p>
+      <b>Simple connect: </b>
+      <button onClick={toggleConnection}>Toggle Connect</button> <br />
+      <b>ROS url input: </b>
+      <input
+        name="urlInput"
+        defaultValue={url}
+        onChange={(event) => changeUrl(event.target.value)}
+      />
+      <br />
+      <b>ROS url to connect to: </b> {url} <br />
+      <b>Status of ROS:</b> {isConnected ? "connected" : "not connected"}
+      <br />
+      <b>Topics detected:</b>
+      <br />
+    </p>
   );
 }
 
